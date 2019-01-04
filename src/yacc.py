@@ -82,7 +82,7 @@ class VSLCParser(object):
 
     def p_expression_function_call(self, p):
         'expression : ID LPAREN argument_list RPAREN'
-        p[0] = FunctionCall(ID(p[2]), p[3])
+        p[0] = FunctionCall(ID(p[1]), p[3])
 
     def p_argument_list(self, p):
         '''argument_list : empty

@@ -203,12 +203,19 @@ class LLVMCodeGenerator(object):
 
         # Find the callee in the global scope of the module.
         # Need match the function name and also the number of parameter
-        callee_func = self.module.get_global(node.name)
+        callee_func = self.module.get_global(node.name.name)
         if callee_func is None or not isinstance(callee_func, ir.Function):
             raise CodegenError('Call to unknown function', node.name)
-        if len(callee_func.args) != len(node.argument_list):
+        if node.argument_list is None:
+            arglen = 0
+        else:
+            arglen = len(node.argument_list)
+        if len(callee_func.args) != arglen:
             raise CodegenError('Call argument length', len(node.argument_list), 'mismatch', node.name)
-        call_args = [self._codegen(arg) for arg in node.argument_list]
+        if node.argument_list is None:
+            call_args = []
+        else:
+            call_args = [self._codegen(arg) for arg in node.argument_list]
         return self.builder.call(callee_func, call_args, 'calltmp')
 
     def _codegen_FunctionDefinition(self, node):
@@ -244,13 +251,13 @@ class LLVMCodeGenerator(object):
             arg.name = node.parameter_list[i]
             alloca = self.builder.alloca(ir.DoubleType(), name=arg.name)
             self.builder.store(arg, alloca)
-            self.function_symbol_table[arg.name] = alloca
+            self.function_symbol_table[arg.name.name] = alloca
 
         # We will handle ReturnStatement in the body of the FunctionDefinition
         self._codegen(node.body)
         # But we finally create a ret instruction here to return 0.0 to handle the case
         # that no ReturnStatement in the body of the FunctionDefinition
-        self.builder.ret(ir.Constant(ir.DoubleType, 0.0))
+        self.builder.ret(ir.Constant(ir.DoubleType(), 0.0))
 
         # Reset the function symbol table for the reason of @self._codegen_AssignStatement+3
         self.function_symbol_table = {}

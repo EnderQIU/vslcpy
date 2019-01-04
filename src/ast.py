@@ -211,7 +211,7 @@ class ID(Expression):
 class FunctionCall(Expression):
     def __init__(self, name, argument_list):
         assert isinstance(name, ID)
-        assert only_contains(argument_list, Expression)
+        assert argument_list is None or only_contains(argument_list, Expression)
 
         self.name = name
         self.argument_list = argument_list

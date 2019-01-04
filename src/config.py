@@ -6,11 +6,11 @@ Global configuration of VSLC
 
 # This will produce various sorts of debugging information including all of the added rules,
 # the master regular expressions used by the lexer, and tokens generating during lexing.
-lexer_debug = True
+lexer_debug = False
 
 # This will print the information of tracking down shift/reduce and reduce/reduce conflicts
 # using an LR parsing algorithm and generate a 'parser.out' file in the current directory.
-parser_debug = True
+parser_debug = False
 
 #
 lexer_optimize = False
